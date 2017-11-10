@@ -1,8 +1,8 @@
 {
-  "name": "zte-form-designer",
+  "name": "vue-form-designer",
   "version": "1.0.0",
   "description": "A Vue.js project",
-  "author": "李伟6404000055 <li.wei29@zte.com.cn>",
+  "author": "李伟 Baldwin<noneasd88@126.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",

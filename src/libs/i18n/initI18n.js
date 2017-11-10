@@ -16,15 +16,14 @@ import en_lang from 'element-ui/lib/locale/lang/en'
 import zh_lang from 'element-ui/lib/locale/lang/zh-CN'
 import locale from 'element-ui/lib/locale'
 import App from '@/App'
-import router from '@/router'
+import Router from 'vue-router'
+import formDesigner from '@/components/formDesigner'
 import store from '@/vuex/store'
 import axios from 'axios'
 
 window.Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-
-window.Vue.config.productionTip = false;
 let la = 'ZH_CN';
 
 window.Vue.config.warnHandler = (msg, vm, trace) => {
@@ -93,9 +92,19 @@ export const loginInit = (user) => {
 const userInfo = JSON.parse(sessionStorage.getItem('user'));
 userInfo && loginInit(userInfo);
 
+window.Vue.use(Router);
+
 new window.Vue({
   el: '#app',
   render: h => h(App),
-  router,
+  router: new Router({
+    routes: [
+      {
+        path: '/',
+        name: 'formDesigner',
+        component: formDesigner
+      }
+    ]
+  }),
   store: store(window.Vue)
 })

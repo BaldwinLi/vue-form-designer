@@ -186,7 +186,7 @@ function gridSystemGenerator() {
 			$(this).parent().next().children().html(t);
 			$(this).parent().prev().show()
 		} else {
-			$(this).parent().prev().hide()
+			// $(this).parent().prev().hide()
 		}
 	})
 }
@@ -318,20 +318,37 @@ function initContainer(){
 			startdrag = 1;
 		},
 		stop: function(e,t) {
+			var wrapper = $(".vue-wrapper",t.item).not(".loaded");
+			loadVue(wrapper);
 			if(stopsave>0) stopsave--;
 			startdrag = 0;
 		}
 	});
 	configurationElm();
 }
+
+function loadVue(wrapper){
+	try{
+		$.each(wrapper, function(i,wrapperdom) {
+			var wrapperModel = new Vue({
+				el:wrapperdom
+			});
+			$(wrapperModel.$el).addClass('loaded');
+		});
+	}catch(e){
+		console.warn("组件初始化失败");
+		throw e;
+	}
+}
+
 $(document).ready(function() {
-	CKEDITOR.disableAutoInline = true;
+	// CKEDITOR.disableAutoInline = true;
 	restoreData();
-	var contenthandle = CKEDITOR.replace( 'contenteditor' ,{
-		language: 'zh-cn',
-		contentsCss: ['css/bootstrap-combined.min.css'],
-		allowedContent: true
-	});
+	// var contenthandle = CKEDITOR.replace( 'contenteditor' ,{
+	// 	language: 'zh-cn',
+	// 	contentsCss: ['css/bootstrap-combined.min.css'],
+	// 	allowedContent: true
+	// });
 	$("body").css("min-height", $(window).height() - 90);
 	$(".demo").css("min-height", $(window).height() - 160);
 	$(".sidebar-nav .lyrow").draggable({
@@ -384,11 +401,11 @@ $(document).ready(function() {
 		e.preventDefault();
 		currenteditor = $(this).parent().parent().find('.view');
 		var eText = currenteditor.html();
-		contenthandle.setData(eText);
+		// contenthandle.setData(eText);
 	});
 	$("#savecontent").click(function(e) {
 		e.preventDefault();
-		currenteditor.html(contenthandle.getData());
+		// currenteditor.html(contenthandle.getData());
 	});
 	$("[data-target='#downloadModal']").click(function(e) {
 		e.preventDefault();
@@ -454,7 +471,7 @@ $(document).ready(function() {
 		$(this).addClass("active");
 		downloadLayoutSrc()
 	});
-	$(".nav-header").click(function() {
+	$(".nav-header").click(function(e) {
 		$(".sidebar-nav .boxes, .sidebar-nav .rows").hide();
 		$(this).next().slideDown()
 	});
