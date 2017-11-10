@@ -44,7 +44,7 @@
     <div class="row-fluid" style="min-height: fill-available;">
       <div class="">
         <div class="sidebar-nav">
-          <ul v-for="(item, index) in componentsMenu" :key="item.id" class="nav nav-list accordion-group">
+          <ul v-for="(item, index) in components" :key="item.id" class="nav nav-list accordion-group">
             <li class="nav-header">
               <i :class="item.icon"></i>{{item.label}}
               <div class="pull-right popover-info">
@@ -58,7 +58,7 @@
               </div>
             </li>
             <li class="boxes">
-              <div v-for="(item_a, index_a) in item.components" :key="item_a.id" class="box box-element ui-draggable">
+              <div v-for="(item_a, index_a) in item.list" :key="item_a.id" class="box box-element ui-draggable">
                 <a href="#close" class="remove label label-important">
                   <i class="icon-remove icon-white"></i>删除</a>
                 <span class="drag label" style="float: left; margin-left: 5px; position: relative">
@@ -89,14 +89,14 @@
         </div>
       </div>
       <!--/span-->
-      <div class="demo ui-sortable" style="min-height: fill-available;">
+      <div class="demo ui-sortable lyrow" style="min-height: fill-available;">
         <div class="lyrow">
           <!--
           <a href="#close" class="remove label label-important">
             <i class="icon-remove icon-white"></i>删除
             </a>
           <span class="drag label">
-            <i class="icon-move"></i>拖拽</span> -->
+            <i class="icon-move"></i>拖拽<  /span> -->
           <div class="preview">9 3</div>
           <div class="view">
             <div class="row-fluid clearfix">
@@ -167,13 +167,13 @@
 </template>
 
 <script>
-import "@/libs/scripts";
-import componentsMenu from "./componentsMenu";
+import "./form.designer.engine";
+import components from "./components.menu.config";
 export default {
   name: "form-designer",
   data() {
     return {
-      componentsMenu
+      components
     };
   },
   methods: {
@@ -183,8 +183,8 @@ export default {
   },
   mounted() {
     const scope = this;
-    this.componentsMenu.forEach(e=>{
-      e.components.forEach(el=>{
+    this.components.forEach(e => {
+      e.list.forEach(el => {
         const ref = scope.$refs[el.id];
       });
     });

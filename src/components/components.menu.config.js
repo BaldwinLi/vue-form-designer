@@ -4,7 +4,7 @@ export default [{
     icon: 'icon-plus icon-white',
     descriptionTitle: '说明',
     description: '提供页面基础组件，包括：布局行、布局列、布局容器、按钮',
-    components: [{
+    list: [{
         id: 'el-row',
         label: '布局行',
         icon: 'el-icon-info',
@@ -68,7 +68,7 @@ export default [{
     icon: 'icon-plus icon-white',
     descriptionTitle: '说明',
     description: '提供表单组件，包括：表单、单选框、多选框、输入框、选择器、计数器、级联选择器、开关、滑块、时间选择器、日期选择器、日期时间选择器、上传、评分、颜色选择器、穿梭框',
-    components: [{
+    list: [{
         id: 'el-form',
         label: '表单',
         icon: 'el-icon-info',
@@ -255,7 +255,7 @@ export default [{
     icon: 'icon-plus icon-white',
     descriptionTitle: '说明',
     description: '提供数据显示组件，包括：表格、标签、进度条、树形控件、分页器、标记',
-    components: [{
+    list: [{
         id: 'el-table',
         label: '表格',
         icon: 'el-icon-info',

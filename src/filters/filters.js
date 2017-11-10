@@ -1,4 +1,4 @@
-import * as model from '../dataModel';
+import * as model from '../data.model';
 export const lookup = (id, key) => {
   if (!!model[key]) {
       for(let e of model[key]){
