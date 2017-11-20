@@ -2,7 +2,7 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
-import FormDesigner from '@/components/form.designer'
+import FormDesigner from '@/form.designer/form.designer'
 
 Vue.use(Router);
 

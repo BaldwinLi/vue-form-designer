@@ -35,8 +35,8 @@ body {
 	box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-.edit .demo { margin-left:0px; margin-top:10px; padding:30px 15px 15px; border: 1px solid #DDDDDD; border-radius: 4px; position:relative; word-wrap: break-word;}
-.edit .demo:after {
+/* .edit .canvas { margin-left:0px; margin-top:10px; padding:30px 15px 15px; border: 1px solid #DDDDDD; border-radius: 4px; position:relative; word-wrap: break-word;}
+.edit .canvas:after {
 	background-color: #F5F5F5;
 	border: 1px solid #DDDDDD;
 	border-radius: 4px 0 4px 0;
@@ -48,7 +48,7 @@ body {
 	padding: 3px 7px;
 	position: absolute;
 	top: -1px;
-}
+} */
 .sidebar-nav {
 	position:fixed;
 	width:200px;
@@ -85,22 +85,22 @@ body {
 
 .sidebar-nav .boxes { display:none;}
 
-.demo .preview { display: none; }
-.demo .box .view { display: block; padding-top:30px;}
+.canvas .preview { display: none; }
+.canvas .box .view { display: block; padding-top:30px;}
 
 
 .ui-draggable-dragging .view { display:block;}
-/*.demo .ui-sortable-placeholder { outline: 5px dotted #ddd; visibility: visible!Important; border-radius: 4px; }*/
+/*.canvas .ui-sortable-placeholder { outline: 5px dotted #ddd; visibility: visible!Important; border-radius: 4px; }*/
 .ui-sortable-placeholder { outline: 1px dashed #ddd;visibility: visible!Important; border-radius: 4px;}
 .edit .drag { position: absolute; top: 0;right: 0; cursor: pointer; }
 
 .box,.lyrow { position:relative;}
 
-.edit .demo .lyrow .drag { top:5px; right:80px; z-index:10; }
-.edit .demo .column .box .drag { top:5px; }
-.edit .demo .column .box .configuration {position: absolute; top: 3px; right: 140px;white-space:nowrap; }
-.edit .demo .remove { position: absolute; top: 5px; right: 5px; z-index:10; }
-.demo .configuration {
+.edit .canvas .lyrow .drag { top:5px; right:80px; z-index:10; }
+.edit .canvas .column .box .drag { top:5px; }
+.edit .canvas .column .box .configuration {position: absolute; top: 3px; right: 140px;white-space:nowrap; }
+.edit .canvas .remove { position: absolute; top: 5px; right: 5px; z-index:10; }
+.canvas .configuration {
 	filter: alpha(opacity=0);
 	opacity: 0;
 	-webkit-transition: all 500ms ease;
@@ -109,7 +109,7 @@ body {
 	-o-transition: all 500ms ease;
 	transition: all 500ms ease;
 }
-.demo .drag, .demo .remove {
+.canvas .drag, .canvas .remove {
 	filter: alpha(opacity=20); opacity: 0.2;
 	-webkit-transition: all 500ms ease;
 	-moz-transition: all 500ms ease;
@@ -117,18 +117,18 @@ body {
 	-o-transition: all 500ms ease;
 	transition: all 500ms ease;
 }
-.demo .lyrow:hover > .drag, 
-.demo .lyrow:hover > .configuration, 
-.demo .lyrow:hover > .remove,
-.demo .box:hover .drag, 
-.demo .box:hover .configuration, 
-.demo .box:hover .remove { filter: alpha(opacity=100); opacity: 1; }
-.edit .demo .row-fluid:before {
+.canvas .lyrow:hover > .drag, 
+.canvas .lyrow:hover > .configuration, 
+.canvas .lyrow:hover > .remove,
+.canvas .box:hover .drag, 
+.canvas .box:hover .configuration, 
+.canvas .box:hover .remove { filter: alpha(opacity=100); opacity: 1; }
+.edit .canvas .row-fluid:before {
 	background-color: #F5F5F5;
 	border: 1px solid #DDDDDD;
 	border-radius: 4px 0 4px 0;
 	color: #9DA0A4;
-	content: "Row";
+	/* content: "Row"; */
 	font-size: 12px;
 	font-weight: bold;
 	left: -1px;
@@ -137,8 +137,8 @@ body {
 	position: absolute;
 	top: -1px;
 }
-.demo .row-fluid {
-	background-color: #F5F5F5;
+.canvas .row-fluid {
+	background-color: #fff;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -151,12 +151,13 @@ body {
 	position: relative;
 	padding: 25px  14px 0;
 }
+
 .edit .column:after {
 	background-color: #F5F5F5;
 	border: 1px solid #DDDDDD;
 	border-radius: 4px 0 4px 0;
 	color: #9DA0A4;
-	content: "Column";
+	/* content: "Column"; */
 	font-size: 12px;
 	font-weight: bold;
 	left: -1px;
@@ -164,6 +165,11 @@ body {
 	position: absolute;
 	top: -1px;
 }
+
+.edit .canvas-title:after {
+	content: "表单画布";
+}
+
 .column {
 	background-color: #FFFFFF;
 	border: 1px solid #DDDDDD;
@@ -184,7 +190,7 @@ body.devpreview { margin-left:0px;}
 	transition: all 0ms ease;
 }
 .devpreview .drag, .devpreview .configuration, .devpreview .remove { display:none !Important; }
-.sourcepreview .column, .sourcepreview .row-fluid, .sourcepreview .demo .box {
+.sourcepreview .column, .sourcepreview .row-fluid, .sourcepreview .canvas .box {
 	margin:0px 0;
 	padding:0px;
 	background:none;
@@ -193,8 +199,8 @@ body.devpreview { margin-left:0px;}
 	-moz-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.00);
 	box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.00);
 }
-.devpreview .demo .box, .devpreview .demo .row-fluid { padding-top:0; background:none; }
-.devpreview .demo .column { padding-top:19px; padding-bottom:19px; }
+.devpreview .canvas .box, .devpreview .canvas .row-fluid { padding-top:0; background:none; }
+.devpreview .canvas .column { padding-top:19px; padding-bottom:19px; }
 #download-layout { display: none }
 #editorModal textarea,#sourceModal textarea,
 #downloadModal textarea { width:100%;height:280px;resize: none;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box; }

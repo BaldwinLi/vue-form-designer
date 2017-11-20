@@ -20,13 +20,15 @@ import App from '@/App'
 Vue.config.productionTip = false
 
 Vue.config.warnHandler = (msg, vm, trace) => {
-  if(msg==='Injection "elForm" not found' && 
-     msg==='Injection "elFormItem" not found' && 
-     msg==='Invalid prop: type check failed for prop "hideAfter". Expected Number, got String.') 
-    console.error(("[Vue warn]: " + msg + trace))
+    if (msg === 'Injection "elForm" not found' &&
+        msg === 'Injection "elFormItem" not found' &&
+        msg === 'Invalid prop: type check failed for prop "hideAfter". Expected Number, got String.')
+        console.error(("[Vue warn]: " + msg + trace))
 }
 
 window.Vue = Vue
+window.$ = window.jQuery = $
+window._ = _
 
 new window.Vue({
     el: '#app',

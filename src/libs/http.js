@@ -8,6 +8,7 @@ Vue.http = Vue.prototype.$http = axios;
 export const loginInit = (user) => {
   Vue.prototype.$http.interceptors.request.use(
     config => {
+      config.headers.common['X-Emp-No'] = '6404000055';
       return config;
     },
     err => Promise.reject(err)
@@ -25,5 +26,5 @@ export const loginInit = (user) => {
   );
 }
 
-const userInfo = JSON.parse(sessionStorage.getItem('user'));
+const userInfo = JSON.parse(sessionStorage.getItem('user')) || {};
 userInfo && loginInit(userInfo);

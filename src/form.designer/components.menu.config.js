@@ -8,51 +8,48 @@ export default [{
         id: 'el-row',
         label: '布局行',
         icon: 'el-icon-info',
-        html: `<el-row :gutter="10"></el-row>`,
+        html: `<el-row :gutter="10" class="column ui-sortable lyrow"></el-row>`,
         buttons: [{
             id: 'setting',
-            label: '栅格间隔'
-        }],
-        menus: [{
-            id: 'align',
-            label: '垂直排列方式',
-            elems: ['top', 'middle', 'bottom']
+            label: '设置'
         }]
     }, {
         id: 'el-col',
         label: '布局列',
         icon: 'el-icon-info',
-        html: `<el-col :gutter="6"></el-col>`,
+        html: `<el-col class="column ui-sortable lyrow"></el-col>`,
         buttons: [{
             id: 'setting',
-            label: '宽度比例'
-        }],
-        menus: [{
-            id: 'offset',
-            label: '列间隔'
+            label: '设置'
         }]
-    }, {
-        id: 'el-container',
-        label: '布局容器',
-        icon: 'el-icon-info',
-        html: `
-        <el-container>
-        <el-header>Header</el-header>
-        <el-container>
-          <el-aside width="200px">Aside</el-aside>
-          <el-main>Main</el-main>
-        </el-container>
-      </el-container>
-      `,
-        buttons: [{
-            id: 'setting',
-            label: '宽度比例'
-        }],
-        menus: [{
-            id: 'offset',
-            label: '列间隔'
-        }]
-    }, {
+        // menus: [{
+        //     id: 'offset',
+        //     label: '列间隔'
+        // }]
+    },
+    //  {
+    //     id: 'el-container',
+    //     label: '布局容器',
+    //     icon: 'el-icon-info',
+    //     html: `
+    //     <el-container>
+    //     <el-header>Header</el-header>
+    //     <el-container>
+    //       <el-aside width="200px">Aside</el-aside>
+    //       <el-main>Main</el-main>
+    //     </el-container>
+    //   </el-container>
+    //   `,
+    //     buttons: [{
+    //         id: 'setting',
+    //         label: '设置'
+    //     }]
+    //     // menus: [{
+    //     //     id: 'offset',
+    //     //     label: '列间隔'
+    //     // }]
+    // }, 
+    {
         id: 'el-button',
         label: '按钮',
         icon: 'el-icon-info',
@@ -68,18 +65,20 @@ export default [{
     icon: 'icon-plus icon-white',
     descriptionTitle: '说明',
     description: '提供表单组件，包括：表单、单选框、多选框、输入框、选择器、计数器、级联选择器、开关、滑块、时间选择器、日期选择器、日期时间选择器、上传、评分、颜色选择器、穿梭框',
-    list: [{
-        id: 'el-form',
-        label: '表单',
-        icon: 'el-icon-info',
-        html: `
-        <el-form></<el-form>
-                       `,
-        buttons: [{
-            id: 'setting',
-            label: '设置'
-        }]
-    }, {
+    list: [
+    //     {
+    //     id: 'el-form',
+    //     label: '表单',
+    //     icon: 'el-icon-info',
+    //     html: `
+    //     <el-form></<el-form>
+    //                    `,
+    //     buttons: [{
+    //         id: 'setting',
+    //         label: '设置'
+    //     }]
+    // },
+     {
         id: 'el-input',
         label: '输入框',
         icon: 'el-icon-info',
@@ -101,7 +100,7 @@ export default [{
         id: 'el-checkbox',
         label: '多选框',
         icon: 'el-icon-info',
-        html: `<el-radio label="1">备选项</el-radio>`,
+        html: `<el-checkbox>备选项</el-checkbox>`,
         buttons: [{
             id: 'setting',
             label: '设置'
