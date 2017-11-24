@@ -25,44 +25,6 @@ const downloadLayout = () => {
 	});
 }
 
-const saveLayout = () => {
-	var layout = layoutHistory;
-	var form = formHistory;
-	if (!layout || !form) {
-		layout = {};
-		layout.count = 0;
-		layout.list = [];
-		form = {};
-		form.count = 0;
-		form.list = [];
-	}
-	if (layout.list.length > layout.count || form.list.length > form.count) {
-		for (i = layout.count; i < layout.list.length; i++)
-			layout.list[i] = null;
-		for (i = form.count; i < form.list.length; i++)
-			form.list[i] = null;
-	}
-	layout.list[layout.count] = window.drawerHtml;
-	layout.count++;
-	form.list[form.count] = window.formHtml;
-	form.count++;
-	if (supportstorage()) {
-		localStorage.setItem("layoutdata", JSON.stringify(layout));
-		localStorage.setItem("formdata", JSON.stringify(form));
-	}
-	layoutHistory = layout;
-	formHistory = form;
-	//console.log(data);
-	/*$.ajax({  
-		type: "POST",  
-		url: "/build/saveLayout",  
-		data: { layout: $('.canvas').html() },  
-		success: function(data) {
-			//updateButtonsVisibility();
-		}
-	});*/
-}
-
 const handleAccordionIds = () => {
 	var e = $(".canvas #myAccordion");
 	var t = randomNumber();
@@ -175,8 +137,95 @@ export default {
 			.find(".view");
 	},
 	edit(event) {
-		$("body").removeClass("devpreview sourcepreview");
-		$("body").addClass("edit");
+		// $("body").removeClass("devpreview sourcepreview");
+		// $("body").addClass("edit");
+		const scope = this;
+		if (window.drawerHtml) {
+			$(".canvas").empty().html(window.drawerHtml);
+		} else {
+			$(".canvas").empty().html(`
+			<div class="lyrow">
+				<div class="preview"></div>
+				<div class="view">
+					<div class="span12 canvas-title column ui-sortable" style="height: -webkit-fill-available">
+					</div>
+				</div>
+			  </div>
+			`);
+		}
+		this.initContainer();
+		$("body").css("min-height", $(window).height() - 90);
+		$(".canvas").css("min-height", $(window).height() - 160);
+		$(".sidebar-nav .lyrow").draggable({
+			connectToSortable: ".canvas",
+			helper: "clone",
+			handle: ".drag",
+			start: function (e, t) {
+				if (!scope.startdrag) scope.stopsave++;
+				scope.startdrag = 1;
+			},
+			drag: function (e, t) {
+				if (
+					t.helper
+						.children(".view")
+						.children(".vue-wrapper")
+						.children("div")
+						.children("el-col").length > 0
+				) {
+					t.helper.width("23%");
+					t.helper.css({
+						margin: "1%"
+					});
+				} else {
+					t.helper.width("100%");
+				}
+				t.helper.css({
+					display: "inline-block",
+					height: "auto"
+				});
+				// t.ihelper.float('left');
+				// }
+			},
+			stop: function (e, t) {
+				$(".canvas .column").sortable({
+					opacity: 0.35,
+					connectWith: ".column",
+					start: function (e, t) {
+						if (!scope.startdrag) scope.stopsave++;
+						scope.startdrag = 1;
+					},
+					stop: function (e, t) {
+						scope.setVueDom(t.item, true);
+						// scope.loadVue(wrapper, true);
+						if (scope.stopsave > 0) scope.stopsave--;
+						scope.startdrag = 0;
+					}
+				});
+				if (scope.stopsave > 0) scope.stopsave--;
+				scope.startdrag = 0;
+			}
+		});
+
+		$(".sidebar-nav .box").draggable({
+			connectToSortable: ".column",
+			helper: "clone",
+			handle: ".drag",
+			start: function (e, t) {
+				if (!scope.startdrag) scope.stopsave++;
+				scope.startdrag = 1;
+			},
+			drag: function (e, t) {
+				t.helper.width("100%");
+			},
+			stop: function () {
+				scope.handleJsIds();
+				if (scope.stopsave > 0) scope.stopsave--;
+				scope.startdrag = 0;
+			}
+		});
+
+		this.removeElm();
+		this.gridSystemGenerator();
 		return false;
 	},
 	devPreview() {
@@ -187,42 +236,30 @@ export default {
 		return false;
 	},
 	sourcePreview(event) {
-		$("body").removeClass("edit");
-		$("body").addClass("devpreview sourcepreview");
-		this.removeMenuClasses();
-		$(event.currentTarget).addClass("active");
+		// $("body").removeClass("edit");
+		// $("body").addClass("devpreview sourcepreview");
+		// this.removeMenuClasses();
+		// $(event.currentTarget).addClass("active");
+		$(".canvas").empty().css({'padding-top': '2rem'}).html(window.formHtml);
+		new Vue({
+			el: $(".canvas")[0]
+		});
 		return false;
-	},
-	saveContent() {
-		alert("saveContent");
-	},
-	download() {
-		alert("download");
 	},
 	saveHTML() {
 		const scope = this;
-		this.$http.post(`${this.appContextPath}templates`, {
-			"createdBy": "test user",
-			"creationDate": (new Date()).toISOString(),
-			"cssfiles": "",
-			"formTemplateGroupId": 0,
-			"html": this.formDom.html(),
-			"id": 0,
-			"jsfiles": "",
-			"lastUpdateDate": (new Date()).toISOString(),
-			"lastUpdatedBy": "test user",
-			"remark": "test",
-			"status": 0,
-			"version": "v0.0.1"
-		}).then(
+		this.params.html = window.formHtml;
+		this.params.version = 'v0.0.1';
+		this.$http.post(`${this.appContextPath}templates`, this.params).then(
 			success => {
+				scope.params = success.data.bo;
 				scope.handleSaveLayout();
 				scope.$message.success('保存成功');
 			},
 			error => {
 				scope.$message.error('保存失败');
 			}
-			);
+		);
 
 	},
 	clearHTML() {
@@ -245,13 +282,13 @@ export default {
 	},
 	handleSaveLayout() {
 		const scope = this;
-		const e = $(".canvas").html();
-		const el = scope.formDom.html()
-		if (!scope.stopsave && (e != window.drawerHtml || el != window.formHtml)) {
+		const canvas = window.drawerHtml;
+		const form = scope.formDom.html();
+		if (!scope.stopsave) {
 			scope.stopsave++;
-			window.drawerHtml = e;
-			window.formHtml = e;
-			saveLayout();
+			window.drawerHtml = canvas;
+			window.formHtml = form;
+			scope.saveLayout();
 			scope.stopsave--;
 		}
 	},
@@ -268,21 +305,33 @@ export default {
 		});
 	},
 	clearCanvas() {
-		$(".canvas .view .canvas-title").empty();
+		if ($(".canvas .view .canvas-title").length > 0) $(".canvas .view .canvas-title").empty();
+		else $(".canvas").empty();
 		layoutHistory = null;
 		formHistory = null;
-		if (supportstorage())
+		window.drawerHtml = '';
+		window.formHtml = '';
+		this.formDom.empty();
+		if (supportstorage()) {
 			localStorage.removeItem("layoutdata");
-		localStorage.removeItem("formdata");
+			localStorage.removeItem("formdata");
+		}
 	},
 	undoLayout() {
+		if ($(".canvas .view .canvas-title").length === 0) return;
 		let layout = layoutHistory;
 		let form = formHistory;
 		//console.log(data);
 		if (layout && form) {
-			if (layout.count < 2 || form.count < 2) return false;
+			if (layout.count < 2 || form.count < 2) {
+				$(".canvas .view .canvas-title").empty();
+				return false;
+			}
 			window.drawerHtml = layout.list[layout.count - 2];
 			window.formHtml = form.list[form.count - 2];
+			this.formDom = $(`
+			<el-container></el-container>
+			`).append(window.formHtml);
 			layout.count--;
 			form.count--;
 			$('.canvas').html(window.drawerHtml);
@@ -295,12 +344,16 @@ export default {
 		return false;
 	},
 	redoLayout() {
+		if ($(".canvas .view .canvas-title").length === 0) return;
 		let layout = layoutHistory;
 		let form = formHistory;
 		if (layout && form) {
 			if (layout.list[layout.count] && form.list[form.count]) {
 				window.drawerHtml = layout.list[layout.count];
 				window.formHtml = form.list[form.count];
+				this.formDom = $(`
+				<el-container></el-container>
+				`).append(window.formHtml);
 				layout.count++;
 				form.count++;
 				$('.canvas').html(window.drawerHtml);
@@ -340,9 +393,13 @@ export default {
 		const scope = this;
 		$(".canvas").delegate(".remove", "click", function (e) {
 			$(this).parent().remove();
+			const elemId = $(this).parent().children('.view').children('.vue-wrapper').children().children().attr('id');
+			scope.formDom.find('#' + elemId).remove();
+			window.formHtml = scope.formDom.html();
 			if (!$(".canvas .lyrow").length > 0) {
-				scope.clearCanvas()
+				scope.clearCanvas();
 			}
+			scope.saveLayout();
 		});
 	},
 	removeMenuClasses() {
@@ -357,7 +414,9 @@ export default {
 			window.formHtml = formHistory.list[formHistory.count - 1];
 			if (window.drawerHtml && window.formHtml) {
 				$(".canvas").html(window.drawerHtml);
-				this.formDom = $(window.formHtml);
+				this.formDom = $(`
+				<el-container></el-container>
+				`).append(window.formHtml);
 			};
 		}
 	},
@@ -374,7 +433,7 @@ export default {
 			stop: function (e, t) {
 				// if(!_.startsWith(elementId, 'el-row') && !_.startsWith(elementId, 'el-col')){}
 				var wrapper = $(".vue-wrapper", t.item).not(".loaded");
-				scope.setVueDom(t.item);
+				scope.setVueDom(t.item, wrapper.length === 0);
 				scope.loadVue(wrapper);
 				if (scope.stopsave > 0) scope.stopsave--;
 				scope.startdrag = 0;
@@ -385,20 +444,28 @@ export default {
 	setVueDom(item, isReset) {
 		const element = isReset ? $(".vue-wrapper", item).children().children() : $(".vue-wrapper", item).children().children().clone();
 		if (!isReset) {
-			const elementName = element[0].localName;
+			const elementName = (element[0] && element[0].localName) || '';
+			if (elementName === 'el-col') {
+				$(element).attr(':span', '6');
+			}
 			const elementId = element.attr('id') || `${elementName}-${Date.now() + _.uniqueId()}`;
 			element.attr('id', elementId);
 			$(".vue-wrapper", item).children().children().attr('id', elementId);
+			element.removeClass();
 		}
 		const containerId = item.parent().attr('id');
+
+		const _element = isReset ? this.formDom.find('#' + element.attr('id')) : element;
 		if (!!containerId) {
-			this.formDom.find(`#${containerId}`).append(element.clone());
+			this.formDom.find(`#${containerId}`).append(_element);
 		} else {
-			this.formDom.append(element.clone());
+			this.formDom.append(_element);
 		}
+		window.drawerHtml = $(".canvas").html();
 		window.formHtml = this.formDom.html();
 	},
 	loadVue(wrapper) {
+		const scope = this;
 		try {
 			$.each(wrapper, function (i, wrapperdom) {
 				const elementId = $(wrapperdom).children().children().attr('id');
@@ -417,10 +484,95 @@ export default {
 				// 	$(wrapperModel.$el).appendTo(outerhtml);
 				// }
 				$(wrapperModel.$el).find('.el-col').attr('style', 'float: none;')
+				setTimeout(() => {
+					window.drawerHtml = $(".canvas").html();
+					window.formHtml = scope.formDom.html();
+					scope.saveLayout();
+				});
 			});
 		} catch (e) {
 			console.warn("组件初始化失败");
 			throw e;
 		}
+	},
+	addProperty() {
+		$('#addProperty').append(`<div class="col-sm-4"><label>key:</label></div>
+				  <div class="col-sm-8"><input type="text" name="propName"/></div>
+				  <div class="col-sm-4"><label>value:</label></div>
+				  <div class="col-sm-8"><textarea name="propVal"></textarea></div>`);
+	},
+	addRow() {
+		const scope = this;
+		const rowDom = $(`
+		<div class="lyrow ui-draggable">
+		<a class="remove label label-important" style="padding: 0;float: right;">
+			<i class="icon-remove icon-white"></i>
+		</a>
+	  	<span class="drag label" style="margin-left: 5px; position: relative">
+			<i class="el-icon-info"></i> 布局行 <i class="icon-move"></i>
+		</span>
+	  	<span class="configuration" style="margin-left: 1rem;">
+	  		<a type="button" class="btn btn-mini" style="padding: 0;">
+		  		<i class="el-icon-setting"></i>
+	  		</a>
+	  	</span>
+		<div class="preview"></div>
+		<div class="view" :ref="item_a.id">
+		  <div class="vue-wrapper">
+			  <div>
+			  	<el-row :gutter="10" id="el-row-${Date.now() + _.uniqueId()}" class="column ui-sortable lyrow"></el-row>
+			  </div>
+		  </div>
+		</div>
+	  </div>
+		`);
+		$(".canvas .view .canvas-title").append(rowDom);
+		const wrapper = $(".vue-wrapper", rowDom).not(".loaded");
+		this.setVueDom(rowDom);
+		this.loadVue(wrapper);
+		$(".canvas .column").sortable({
+			opacity: 0.35,
+			connectWith: ".column",
+			start: function (e, t) {
+				if (!scope.startdrag) scope.stopsave++;
+				scope.startdrag = 1;
+			},
+			stop: function (e, t) {
+				scope.setVueDom(t.item, true);
+				scope.saveLayout();
+				if (scope.stopsave > 0) scope.stopsave--;
+				scope.startdrag = 0;
+			}
+		});
+		if (scope.stopsave > 0) scope.stopsave--;
+		scope.startdrag = 0;
+	},
+	saveLayout() {
+		var layout = layoutHistory;
+		var form = formHistory;
+		if (!layout || !form) {
+			layout = {};
+			layout.count = 0;
+			layout.list = [];
+			form = {};
+			form.count = 0;
+			form.list = [];
+		}
+		if (layout.list.length > layout.count || form.list.length > form.count) {
+			for (let i = layout.count; i < layout.list.length; i++)
+				layout.list[i] = null;
+			for (let i = form.count; i < form.list.length; i++)
+				form.list[i] = null;
+		}
+		layout.list[layout.count] = window.drawerHtml;
+		layout.count++;
+		form.list[form.count] = window.formHtml;
+		form.count++;
+		if (supportstorage()) {
+			localStorage.setItem("layoutdata", JSON.stringify(layout));
+			localStorage.setItem("formdata", JSON.stringify(form));
+		}
+		layoutHistory = layout;
+		formHistory = form;
 	}
 }

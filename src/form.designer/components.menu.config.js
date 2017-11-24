@@ -4,16 +4,18 @@ export default [{
     icon: 'icon-plus icon-white',
     descriptionTitle: '说明',
     description: '提供页面基础组件，包括：布局行、布局列、布局容器、按钮',
-    list: [{
-        id: 'el-row',
-        label: '布局行',
-        icon: 'el-icon-info',
-        html: `<el-row :gutter="10" class="column ui-sortable lyrow"></el-row>`,
-        buttons: [{
-            id: 'setting',
-            label: '设置'
-        }]
-    }, {
+    list: [
+    //     {
+    //     id: 'el-row',
+    //     label: '布局行',
+    //     icon: 'el-icon-info',
+    //     html: `<el-row :gutter="10" class="column ui-sortable lyrow"></el-row>`,
+    //     buttons: [{
+    //         id: 'setting',
+    //         label: '设置'
+    //     }]
+    // }, 
+    {
         id: 'el-col',
         label: '布局列',
         icon: 'el-icon-info',
