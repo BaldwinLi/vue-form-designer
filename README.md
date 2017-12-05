@@ -1,4 +1,4 @@
-# 可视化表单构建器 zte-form-designer
+# 可视化表单构建器 vue-form-designer
 可视化表单构建器的灵感是来源于一款基于layoutit的一个开源项目 http://www.bootcss.com/p/layoutit/
 目前只有在线版本，并没有提供完整的源码。
 粗略版源码请参考 https://github.com/justjavac/layoutit/tree/gh-pages/js
