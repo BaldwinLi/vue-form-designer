@@ -15,20 +15,20 @@ export default [{
     //         label: '设置'
     //     }]
     // }, 
-    {
-        id: 'el-col',
-        label: '布局列',
-        icon: 'el-icon-info',
-        html: `<el-col class="column ui-sortable lyrow"></el-col>`,
-        buttons: [{
-            id: 'setting',
-            label: '设置'
-        }]
-        // menus: [{
-        //     id: 'offset',
-        //     label: '列间隔'
-        // }]
-    },
+    // {
+    //     id: 'el-col',
+    //     label: '布局列',
+    //     icon: 'el-icon-info',
+    //     html: `<el-col class="column ui-sortable lyrow"></el-col>`,
+    //     buttons: [{
+    //         id: 'setting',
+    //         label: '设置'
+    //     }]
+    //     // menus: [{
+    //     //     id: 'offset',
+    //     //     label: '列间隔'
+    //     // }]
+    // },
     //  {
     //     id: 'el-container',
     //     label: '布局容器',

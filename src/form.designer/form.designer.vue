@@ -28,6 +28,10 @@
               </el-button-group>
             </li>
           </ul>
+          <div style="float: right; margin: 1rem;">
+            <el-button type="success" @click="PublishForm" round><i class="el-icon-success"></i>发布业务表单</el-button>
+          </div>
+          
         </div>
         <!--/.nav-collapse -->
       </div>
@@ -54,7 +58,7 @@
               <div v-for="(item_a, index_a) in item.list" :key="item_a.id" class="lyrow ui-draggable">
                 <a class="remove label label-important" style="padding: 0;float: right;">
                   <i class="icon-remove icon-white"></i></a>
-                <span class="drag label" style="display: inline-block; float: left; margin-left: 5px; position: relative">
+                <span class="drag label" style="display: inline-block; float: left; margin-left: 5px; position: relative; right: 0;">
                   <i :class="item_a.icon"></i> {{item_a.label}} <i class="icon-move"></i></span>
                 <span class="configuration" style="margin-left: 1rem;">
                   <!-- <button v-for="(item_a_a, index_a_a) in item_a.buttons" type="button" class="btn btn-mini" data-target="#editorModal" role="button" @click="onClickComponentButton(item_a_a)" @click="onClickComponentButton(item_a_a)">{{item_a_a.label}}</button> -->
@@ -86,7 +90,7 @@
       </div>
       <!--/span-->
       <div class="canvas ui-sortable">
-        <div class="lyrow">
+        <div class="lyrow ui-draggable">
           <!-- <a href="#close" class="remove label label-important">
             <i class="icon-remove icon-white"></i>删除
             </a>
@@ -95,10 +99,21 @@
           <div class="preview"></div>
           <div class="view">
             <!-- <div class="row-fluid clearfix"> -->
-              <div class="span12 canvas-title column ui-sortable" style="min-height: -webkit-fill-available">
+              <div class="span12 canvas-title row-container ui-sortable" style="min-height: -webkit-fill-available">
               </div>
             <!-- </div> -->
           </div>
+        </div>
+        <div style="
+        position: relative;
+        width: 100%;
+        right: auto;
+        bottom: auto;
+        left: 0px;
+        top: 0px;
+        display: inline-block;
+        opacity: 1;
+        height: auto;">
         </div>
       </div>
       <!-- end canvas -->
@@ -108,30 +123,31 @@
           <ul v-for="(item, index) in property" :key="item.id" class="nav nav-list accordion-group">
             <li>
               <!-- <div v-for="(item_a, index_a) in item.list" :key="item_a.id"> -->
+                
                 <div v-if="'el-settings' == item.id" class="row" id="addProperty">
                   <div class="col-sm-12" @click="addProperty"><i class="icon-plus"></i><label>{{item.label}}</label></div>
                 </div>
                 <div v-else-if="'el-class' == item.id || 'el-style' == item.id" class="row">
-                  <div class="col-sm-4"><label>{{item.label}}:</label></div>
-                  <div class="col-sm-8"><textarea :placeholder="item.placeholder"></textarea></div>
+                  <div class="col-sm-4"><label :name="item.label">{{item.label}}:</label></div>
+                  <div class="col-sm-8"><textarea :placeholder="item.placeholder" class="inputprop"></textarea></div>
                 </div>
                 <div v-else-if="'el-array' == item.id">
                   <div v-for="(item_a, index_a) in item" :key="index_a">
                     <div v-if="'id' != index_a">
-                      <div><label>{{index_a}}</label></div>
+                      <div><label :name="index_a">{{index_a}}</label></div>
                       <div class="row">
                         <div v-for="(item_b, index_b) in item_a" :key="index_b">
                           <div v-if="'string' == item_b.placeholder || 'number' == item_b.placeholder">
-                            <div class="col-sm-4"><label>{{item_b.label}}:</label></div>
-                            <div class="col-sm-8"><input type="text" :placeholder="item_b.placeholder"/></div>
+                            <div class="col-sm-4"><label :name="item_b.label">{{item_b.label}}:</label></div>
+                            <div class="col-sm-8"><input type="text" :placeholder="item_b.placeholder" class="inputprop"/></div>
                           </div>
                           <div v-else-if="'boolean' == item_b.placeholder">
-                            <div class="col-sm-12"><label>{{item_b.label}}:</label></div>
-                            <div class="col-sm-12">是：<input type="checkbox"/>   否：<input type="checkbox"/></div>
+                            <div class="col-sm-12"><label :name="item_b.label">{{item_b.label}}:</label></div>
+                            <div class="col-sm-12">是：<input type="radio" :name="index_b" class="inputprop" value="y"/>   否：<input type="radio" :name="index_b" checked="checked" class="inputprop" value="n"/></div>
                           </div>
                           <div v-else>
-                            <div class="col-sm-4"><label>{{item_b.label}}:</label></div>
-                            <div class="col-sm-8"><textarea :placeholder="item_b.placeholder"></textarea></div>
+                            <div class="col-sm-4"><label :name="item_b.label">{{item_b.label}}:</label></div>
+                            <div class="col-sm-8"><textarea :placeholder="item_b.placeholder" class="inputprop"></textarea></div>
                           </div>
                         </div>
                       </div>
@@ -139,8 +155,8 @@
                   </div>
                 </div>
                 <div v-else class="row">
-                  <div class="col-sm-4"><label>{{item.label}}:</label></div>
-                  <div class="col-sm-8"><input type="text" :placeholder="item.placeholder"/></div>
+                  <div class="col-sm-4"><label :name="item.label">{{item.label}}:</label></div>
+                  <div class="col-sm-8"><input type="text" :placeholder="item.placeholder" class="inputprop"/></div>
                 </div>
               <!-- </div> -->
             </li>
@@ -183,7 +199,7 @@ export default {
         cssfiles: "",
         formTemplateGroupId: 0,
         html: '',
-        id: 0,
+        id: -1,
         jsfiles: "",
         lastUpdateDate: '',
         lastUpdatedBy: 'test user',
@@ -191,9 +207,14 @@ export default {
         status: 0,
         version: ''
       },
+      	// <el-main style="height: -webkit-fill-available;"></el-main>
       formDom: $(`
-				<el-container></el-container>
-				`)
+				<el-main style="line-height: 50px; overflow-y: scroll;"></el-main>
+        `),
+      selectTag: {
+        id: '',
+        tagName: ''
+      }
     };
   },
   computed: {
@@ -247,20 +268,8 @@ export default {
         scope.startdrag = 1;
       },
       drag: function(e, t) {
-        if (
-          t.helper
-            .children(".view")
-            .children(".vue-wrapper")
-            .children("div")
-            .children("el-col").length > 0
-        ) {
-          t.helper.width("23%");
-          t.helper.css({
-            margin: "1%"
-          });
-        } else {
-          t.helper.width("100%");
-        }
+        t.helper.width("100%");
+        
         t.helper.css({
           display: "inline-block",
           height: "auto"
@@ -289,26 +298,9 @@ export default {
       }
     });
 
-    $(".sidebar-nav .box").draggable({
-      connectToSortable: ".column",
-      helper: "clone",
-      handle: ".drag",
-      start: function(e, t) {
-        if (!scope.startdrag) scope.stopsave++;
-        scope.startdrag = 1;
-      },
-      drag: function(e, t) {
-        t.helper.width("100%");
-      },
-      stop: function() {
-        scope.handleJsIds();
-        if (scope.stopsave > 0) scope.stopsave--;
-        scope.startdrag = 0;
-      }
-    });
-
     this.removeElm();
     this.gridSystemGenerator();
+    this.initAddColButtonEvent();
 
     document.onkeydown = function(e) {
       var keyCode = e.keyCode || e.which || e.charCode;
@@ -331,15 +323,30 @@ export default {
       }
     };
     $('body').off('click', '.el-icon-setting').on('click', '.el-icon-setting', function(event){
-      var id = $(event.currentTarget).parents('.lyrow.ui-draggable').first().find('.view>div>div').children().first().attr('id');
-      var tagName = id && id.split('-')[1] ;
-      
-      scope.property = scope.properties.basic.concat(scope.properties[tagName] || []);
+      /* var $tagName = $('#set_properties').attr('name') ;
+      if($tagName){
+
+      } */
+      scope.selectTag.id = $(event.currentTarget).parents('.lyrow.ui-draggable').first().find('.view>div>div').children().first().attr('id');
+      scope.selectTag.tagName = scope.selectTag.id && scope.selectTag.id.split('-')[1] ;
+      $('#set_properties').attr({'targetid': scope.selectTag.id, 'name': scope.selectTag.tagName});
+      scope.property = scope.properties.basic.concat(scope.properties[scope.selectTag.tagName] || []);
+      // var id = $(this).parents('.configuration').first().siblings('.view').next().next().next().attr('id') ;
       if($('#set_properties').hasClass('hide')){
         // $('#set_properties').toggleClass('hide') ;
         $('#set_properties').removeClass('hide') ;
-        $('.container-fix').css('margin-right', '200px')
+        $('.container-fix').css('margin-right', '200px');
       }
+    }).on('input', '.inputprop', function(){
+      var key = $.trim($(this).parent().prev().children('label').attr('name')) ;
+      var value = $(this).val() ;
+    // console.log('key:'+key+ '         value: ' + value ) ;
+      var id = $('#set_properties').attr('targetid') ;
+      scope.inputprop(id, key, value);
+    }); 
+    
+    $(window).on('scroll', () => {
+      scope.initContainer();
     });
   }
 };

@@ -225,6 +225,7 @@ export default {
 		});
 
 		this.removeElm();
+		this.initAddColButtonEvent();
 		this.gridSystemGenerator();
 		return false;
 	},
@@ -240,7 +241,7 @@ export default {
 		// $("body").addClass("devpreview sourcepreview");
 		// this.removeMenuClasses();
 		// $(event.currentTarget).addClass("active");
-		$(".canvas").empty().css({'padding-top': '2rem'}).html(window.formHtml);
+		$(".canvas").empty().css({ 'padding-top': '2rem' }).html(window.formHtml);
 		new Vue({
 			el: $(".canvas")[0]
 		});
@@ -283,7 +284,7 @@ export default {
 	handleSaveLayout() {
 		const scope = this;
 		const canvas = window.drawerHtml;
-		const form = scope.formDom.html();
+		const form = scope.formDom[0].outerHTML;
 		if (!scope.stopsave) {
 			scope.stopsave++;
 			window.drawerHtml = canvas;
@@ -330,7 +331,7 @@ export default {
 			window.drawerHtml = layout.list[layout.count - 2];
 			window.formHtml = form.list[form.count - 2];
 			this.formDom = $(`
-			<el-container></el-container>
+			<el-main style="line-height: 50px; overflow-y: scroll;"></el-main>
 			`).append(window.formHtml);
 			layout.count--;
 			form.count--;
@@ -352,7 +353,7 @@ export default {
 				window.drawerHtml = layout.list[layout.count];
 				window.formHtml = form.list[form.count];
 				this.formDom = $(`
-				<el-container></el-container>
+				<el-main style="line-height: 50px; overflow-y: scroll;"></el-main>
 				`).append(window.formHtml);
 				layout.count++;
 				form.count++;
@@ -395,11 +396,17 @@ export default {
 			$(this).parent().remove();
 			const elemId = $(this).parent().children('.view').children('.vue-wrapper').children().children().attr('id');
 			scope.formDom.find('#' + elemId).remove();
-			window.formHtml = scope.formDom.html();
+			window.formHtml = scope.formDom[0].outerHTML;
 			if (!$(".canvas .lyrow").length > 0) {
 				scope.clearCanvas();
 			}
 			scope.saveLayout();
+		});
+	},
+	initAddColButtonEvent() {
+		const scope = this;
+		$(".canvas").delegate(".add-col-button", "click", function (e) {
+			scope.addCol(e);
 		});
 	},
 	removeMenuClasses() {
@@ -415,14 +422,14 @@ export default {
 			if (window.drawerHtml && window.formHtml) {
 				$(".canvas").html(window.drawerHtml);
 				this.formDom = $(`
-				<el-container></el-container>
+				<el-main style="line-height: 50px; overflow-y: scroll;"></el-main>
 				`).append(window.formHtml);
 			};
 		}
 	},
 	initContainer() {
 		const scope = this;
-		$(".canvas, .canvas .column").sortable({
+		$(".canvas,.canvas .column").sortable({
 			connectWith: ".column",
 			opacity: .35,
 			handle: ".drag",
@@ -432,6 +439,10 @@ export default {
 			},
 			stop: function (e, t) {
 				// if(!_.startsWith(elementId, 'el-row') && !_.startsWith(elementId, 'el-col')){}
+				if (t.item.parent().not('.column').length > 0) {
+					t.item.remove();
+					return;
+				}
 				var wrapper = $(".vue-wrapper", t.item).not(".loaded");
 				scope.setVueDom(t.item, wrapper.length === 0);
 				scope.loadVue(wrapper);
@@ -446,7 +457,7 @@ export default {
 		if (!isReset) {
 			const elementName = (element[0] && element[0].localName) || '';
 			if (elementName === 'el-col') {
-				$(element).attr(':span', '6');
+				$(element).attr(':span', '12');
 			}
 			const elementId = element.attr('id') || `${elementName}-${Date.now() + _.uniqueId()}`;
 			element.attr('id', elementId);
@@ -457,12 +468,17 @@ export default {
 
 		const _element = isReset ? this.formDom.find('#' + element.attr('id')) : element;
 		if (!!containerId) {
-			this.formDom.find(`#${containerId}`).append(_element);
+			if (item.next().length > 0) {
+				const nextId = $(".vue-wrapper", item.next()).children().children().attr('id');
+				this.formDom.find(`#${nextId}`).before(_element);
+			} else {
+				this.formDom.find(`#${containerId}`).append(_element);
+			}
 		} else {
 			this.formDom.append(_element);
 		}
 		window.drawerHtml = $(".canvas").html();
-		window.formHtml = this.formDom.html();
+		window.formHtml = this.formDom[0].outerHTML;
 	},
 	loadVue(wrapper) {
 		const scope = this;
@@ -486,7 +502,7 @@ export default {
 				$(wrapperModel.$el).find('.el-col').attr('style', 'float: none;')
 				setTimeout(() => {
 					window.drawerHtml = $(".canvas").html();
-					window.formHtml = scope.formDom.html();
+					window.formHtml = scope.formDom[0].outerHTML;
 					scope.saveLayout();
 				});
 			});
@@ -503,13 +519,16 @@ export default {
 	},
 	addRow() {
 		const scope = this;
+		// 	<span class="drag label" style="margin-left: 5px; position: relative">
+		// 	<i class="el-icon-info"></i> 布局行 <i class="icon-move"></i>
+		// </span>
 		const rowDom = $(`
 		<div class="lyrow ui-draggable">
 		<a class="remove label label-important" style="padding: 0;float: right;">
 			<i class="icon-remove icon-white"></i>
 		</a>
-	  	<span class="drag label" style="margin-left: 5px; position: relative">
-			<i class="el-icon-info"></i> 布局行 <i class="icon-move"></i>
+		<span class="configuration" style="margin-left: 1rem;">
+			<button class="el-button el-button--mini el-button--success is-plain is-round add-col-button" type="button"><i class="el-icon-plus"></i>增加列</button>
 		</span>
 	  	<span class="configuration" style="margin-left: 1rem;">
 	  		<a type="button" class="btn btn-mini" style="padding: 0;">
@@ -520,7 +539,7 @@ export default {
 		<div class="view" :ref="item_a.id">
 		  <div class="vue-wrapper">
 			  <div>
-			  	<el-row :gutter="10" id="el-row-${Date.now() + _.uniqueId()}" class="column ui-sortable lyrow"></el-row>
+			  	<el-row :gutter="10" id="el-row-${Date.now() + _.uniqueId()}" class="row-container ui-sortable lyrow"></el-row>
 			  </div>
 		  </div>
 		</div>
@@ -529,6 +548,36 @@ export default {
 		$(".canvas .view .canvas-title").append(rowDom);
 		const wrapper = $(".vue-wrapper", rowDom).not(".loaded");
 		this.setVueDom(rowDom);
+		this.loadVue(wrapper);
+		if (scope.stopsave > 0) scope.stopsave--;
+		scope.startdrag = 0;
+	},
+	addCol(event) {
+		const scope = this;
+		const colDom = $(`
+		<div class="lyrow ui-draggable" style="width: 48%; margin: 1%; display: inline-block; height: auto">
+			<a class="remove label label-important" style="padding: 0;float: right;">
+				<i class="icon-remove icon-white"></i>
+			</a>
+			  <span class="configuration" style="margin-left: 1rem;">
+				  <a type="button" class="btn btn-mini" style="padding: 0;">
+					  <i class="el-icon-setting"></i>
+				  </a>
+			  </span>
+			<div class="preview"></div>
+			<div class="view" :ref="item_a.id">
+			  <div class="vue-wrapper">
+				  <div>
+				  <el-col class="column ui-sortable lyrow" id="el-col-${Date.now() + _.uniqueId()}"></el-col>
+				  </div>
+			  </div>
+			</div>
+		  </div>
+			`);
+		const selectRowId = $(event.currentTarget).parent().parent().find('.el-row').attr('id');
+		$('#' + selectRowId).append(colDom);
+		const wrapper = $(".vue-wrapper", colDom).not(".loaded");
+		this.setVueDom(colDom);
 		this.loadVue(wrapper);
 		$(".canvas .column").sortable({
 			opacity: 0.35,
@@ -574,5 +623,28 @@ export default {
 		}
 		layoutHistory = layout;
 		formHistory = form;
+	},
+	inputprop(id, key, value) {
+		if ('name' == key) {
+			this.formDom.find('#' + id).attr('v-model', 'form.' + value);
+		} else {
+			this.formDom.find('#' + id).attr(key, value);
+		}
+	},
+	PublishForm() {
+		if (this.params.id !== -1) {
+			window.open('http://localhost:8080/#/showView?templateId=' + this.params.id);
+		} else {
+			this.$alert('你还未保存该表单。', '提示', {
+				confirmButtonText: '确定',
+				callback: action => {
+					this.$message({
+						type: 'warning',
+						message: '已取消发布。'
+					});
+				}
+			});
+		}
+
 	}
 }

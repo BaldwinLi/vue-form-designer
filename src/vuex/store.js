@@ -14,6 +14,6 @@ export default new Vuex.Store({
   mutations: {},
   getters: {
     isLocal: () => proxyedHostNames.includes(window.location.hostname),
-    appContextPath: () => proxyedHostNames.includes(window.location.hostname) ? `${window.location.origin}/dev_api/` : (window.location.origin + '/')
+    appContextPath: () => proxyedHostNames.includes(window.location.hostname) ? `${window.location.origin}/dev_api/` : (window.location.origin + '/zte-form-service/')
   }
 })
