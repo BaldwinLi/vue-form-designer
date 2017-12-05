@@ -10,8 +10,6 @@ ElementUI 详情请参考官方文档 http://element-cn.eleme.io/#/zh-CN
 JqueryUI
 Bootstrap http://v3.bootcss.com/
 
-# zte-form-designer
-
 > A Vue.js project
 
 ## 安装步骤
