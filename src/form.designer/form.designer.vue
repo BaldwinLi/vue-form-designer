@@ -4,7 +4,7 @@
     <div class="navbar-inner">
       <div class="container-fluid">
         <a class="brand">
-          <img src="static/favicon.png" style="margin: 6px;"> ZTE表单构建器 v0.0.1
+          <img src="static/favicon.png" style="margin: 6px;"> 表单构建器 v0.0.1
           <span class="label">Beta</span>
         </a>
         <div class="nav-collapse collapse operate-menu">
